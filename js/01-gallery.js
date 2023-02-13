@@ -1,9 +1,11 @@
 import { galleryItems } from './gallery-items.js';
 // Change code below this line
 
+const galleryEl = document.querySelector(".gallery");
+ 
 
-const galleryImages = (images) => 
-   images.map(({ preview, original, description }) => `<div class="gallery__item">
+const galleryImages = (galleryItems) => 
+   galleryItems.map(({ preview, original, description }) => `<div class="gallery__item">
    <a class="gallery__link" href="${original}">
     <img
        class="gallery__image"
@@ -13,20 +15,31 @@ const galleryImages = (images) =>
   </a>
  </div>`).join('');
     
+galleryEl.insertAdjacentHTML("beforeend", galleryImages(galleryItems));
+galleryEl.addEventListener("click", galleryImagesCards);
+ 
+function galleryImagesCards(evt) {
+    evt.preventDefault();
+    if (!evt.target.dataset.source) {
+        return;
+    }
+    const onCloseModal = (evt) => {
+        const ESC_KEY = "Escape";
+        if (evt.code === ESC_KEY) {
+            instance.close();
+        }
+    }
 
-const insertGalleryList = (string) => {
-    const div = document.querySelector(".gallery");
-    div.insertAdjacentHTML("beforeend", string)
- }
+    const instance = basicLightbox.create(`
+    <img src="${evt.target.dataset.source}" width="800" height="600">
+`, {
+        onShow: () => document.addEventListener("keydown",onCloseModal),
+        onClose: () => document.removeEventListener("keydown", onCloseModal),
+    })
 
-const instance = basicLightbox.create(`
-    <img src="${evn.target.dataset.source}" width="800" height="600">
-`)
+    instance.show()
 
-instance.show()
-
-insertGalleryList(galleryImages(galleryItems));
-
+}
 
 console.log(galleryImages(galleryItems));
 
